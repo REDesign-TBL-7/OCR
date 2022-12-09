@@ -1,6 +1,6 @@
 import cv2
 import pytesseract
-from pytesseract import Output
+# from pytesseract import Output
  
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
