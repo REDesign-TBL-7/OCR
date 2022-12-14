@@ -4,6 +4,8 @@ import numpy as np
 from pytesseract import Output
 from pybraille import convertText
 import re
+from gtts import gTTS
+import os
 
 code_table = {
     'a': '100000',
@@ -81,7 +83,7 @@ def string_to_braille(string_input):
         braille_output.append(code_table[char])
     return braille_output
 
-img =cv2.imread('IMG_9082.PNG')
+img =cv2.imread('images/test.PNG')
 
 d = pytesseract.image_to_data(img, output_type=Output.DICT)
 n_boxes = len(d['text'])
@@ -94,14 +96,25 @@ for i in range(n_boxes):
             output_string += text + " "
             img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+
+# String processing
 output_string = string_processing(output_string)
-output_string = output_string[:5]
 print(output_string)
+
+# Conversion to list of braille
 output_braille = string_to_braille(output_string)
 print(output_braille)
+
+# Conversion to braille image
 print(convertText(output_string))
 
+# Conversion to audio
+language = 'en'
+myobj = gTTS(text=output_string, lang=language, slow=False)
+myobj.save("welcome.mp3")
+os.system("mpg321 welcome.mp3")
+
+# Show image
 cv2.imshow('img', img)
 cv2.waitKey(0)
-
-#hello world
+  
