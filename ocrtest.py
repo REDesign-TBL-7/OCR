@@ -16,3 +16,5 @@ for i in range(n_boxes):
             img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
 cv2.imshow('img', img)
 cv2.waitKey(0)
+
+#hello
