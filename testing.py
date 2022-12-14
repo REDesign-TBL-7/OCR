@@ -83,7 +83,7 @@ def string_to_braille(string_input):
         braille_output.append(code_table[char])
     return braille_output
 
-img =cv2.imread('images/test.PNG')
+img =cv2.imread('images/4.jpg')
 
 d = pytesseract.image_to_data(img, output_type=Output.DICT)
 n_boxes = len(d['text'])
@@ -99,6 +99,7 @@ for i in range(n_boxes):
 
 # String processing
 output_string = string_processing(output_string)
+output_string = output_string[:10]
 print(output_string)
 
 # Conversion to list of braille
@@ -117,4 +118,6 @@ os.system("mpg321 welcome.mp3")
 # Show image
 cv2.imshow('img', img)
 cv2.waitKey(0)
+
+#hello
   
