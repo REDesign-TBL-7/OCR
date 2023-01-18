@@ -118,6 +118,3 @@ os.system("mpg321 welcome.mp3")
 # Show image
 cv2.imshow('img', img)
 cv2.waitKey(0)
-
-#hello
-  
