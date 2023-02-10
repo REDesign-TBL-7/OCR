@@ -6,6 +6,7 @@ from pybraille import convertText
 import re
 from gtts import gTTS
 import os
+from modules.motor import *
 
 code_table = {
     'a': '100000',
@@ -83,38 +84,56 @@ def string_to_braille(string_input):
         braille_output.append(code_table[char])
     return braille_output
 
-img =cv2.imread('images/4.jpg')
+def braille_to_motor(braille_input):
+    motor_output = []
+    for char in braille_input:
+        if len(motor_output) == 0 or len(motor_output[-1]) == 6:
+            motor_output.extend(["","",""])
+        motor_output[-3] += char[:2]
+        motor_output[-2] += char[2:4]
+        motor_output[-1] += char[4:6]
+    return motor_output
+            
 
-d = pytesseract.image_to_data(img, output_type=Output.DICT)
-n_boxes = len(d['text'])
-output_string = ""
-for i in range(n_boxes):
-    if int(d['conf'][i]) > 60:
-        (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
-        # don't show empty text
-        if text and text.strip() != "":
-            output_string += text + " "
-            img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+if __name__ == "__main__":
+    img = cv2.imread('images/4.jpg')
 
-# String processing
-output_string = string_processing(output_string)
-output_string = output_string[:10]
-print(output_string)
+    d = pytesseract.image_to_data(img, output_type=Output.DICT)
+    n_boxes = len(d['text'])
+    output_string = ""
+    for i in range(n_boxes):
+        if int(d['conf'][i]) > 60:
+            (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+            # don't show empty text
+            if text and text.strip() != "":
+                output_string += text + " "
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
 
-# Conversion to list of braille
-output_braille = string_to_braille(output_string)
-print(output_braille)
+    # String processing
+    output_string = string_processing(output_string)
+    output_string = output_string[:10]
+    print(f"String Output: {output_string}")
 
-# Conversion to braille image
-print(convertText(output_string))
+    # Conversion to list of braille
+    output_braille = string_to_braille(output_string)
+    print(f"Braille Output: {output_braille}")
 
-# Conversion to audio
-language = 'en'
-myobj = gTTS(text=output_string, lang=language, slow=False)
-myobj.save("welcome.mp3")
-os.system("mpg321 welcome.mp3")
+    # Conversion to braille image
+    print(convertText(output_string))
 
-# Show image
-cv2.imshow('img', img)
-cv2.waitKey(0)
+    # Conversion to motor instructions
+    output_motor = braille_to_motor(output_braille[:6])
+    print(f"Motor Output: {output_motor}")
+
+    send_motor_instructions(output_motor)
+
+    # Conversion to audio
+    # language = 'en'
+    # myobj = gTTS(text=output_string, lang=language, slow=False)
+    # myobj.save("welcome.mp3")
+    # os.system("mpg321 welcome.mp3")
+
+    # Show image
+    # cv2.imshow('img', img)
+    # cv2.waitKey(0)
