@@ -15,7 +15,7 @@ sudo apt-get install libqt4-test
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python3 ocr_camera.py
+python3 testing.py
 ```
 
 MacOS:
@@ -25,7 +25,7 @@ brew install tesseract
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python3 ocr_camera.py
+python3 testing.py
 ```
 
 # To Deactivate
