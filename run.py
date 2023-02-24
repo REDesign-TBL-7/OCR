@@ -93,9 +93,39 @@ def braille_to_motor(braille_input):
         motor_output[-2] += char[2:4]
         motor_output[-1] += char[4:6]
     return motor_output
+            
 
 if __name__ == "__main__":
-    output_motor = ['001010', '001110', '011010', '011001', '110011', '101000']
+    img = cv2.imread('images/4.jpg')
+
+    d = pytesseract.image_to_data(img, output_type=Output.DICT)
+    n_boxes = len(d['text'])
+    output_string = ""
+    for i in range(n_boxes):
+        if int(d['conf'][i]) > 60:
+            (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+            # don't show empty text
+            if text and text.strip() != "":
+                output_string += text + " "
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+
+    # String processing
+    output_string = string_processing(output_string)
+    output_string = output_string[:10]
+    print(f"String Output: {output_string}")
+
+    # Conversion to list of braille
+    output_braille = string_to_braille(output_string)
+    print(f"Braille Output: {output_braille}")
+
+    # Conversion to braille image
+    print(convertText(output_string))
+
+    # Conversion to motor instructions
+    output_motor = braille_to_motor(output_braille[:6])
+    print(f"Motor Output: {output_motor}")
+
     send_motor_instructions(output_motor)
 
     # Conversion to audio
