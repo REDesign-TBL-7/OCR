@@ -1,13 +1,14 @@
-import threading
 import time
 from adafruit_motorkit import MotorKit
 import board
+from adafruit_motor import stepper
 
 down = True
 kit1 = MotorKit(address=0x60)
 kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
+STEPS = 340
 
 def send_motor_instructions(motor_instructions):
   global down
@@ -46,22 +47,24 @@ def send_motor_instructions(motor_instructions):
 
     if down:
       print("Raising elevator")
-      turn_elevator_motor()
+      turn_elevator_motor(direction=stepper.BACKWARD)
       down = False
+      print("Elevator Raised")
     else:
       print("Lowering elevator")
-      turn_elevator_motor(direction="B")
+      turn_elevator_motor(direction=stepper.FORWARD)
       down = True
+      print("Elevator Lowered")
 
   print("End")
   exit()
 
-def turn_elevator_motor(direction="F"):
-  for i in range(291):
-    kit4.stepper1.onestep(direction=direction)
+def turn_elevator_motor(direction=stepper.FORWARD):
+  for i in range(STEPS * 3):
+    kit4.stepper1.onestep(direction=direction, style=stepper.DOUBLE)
 
 def turn_motors(motor_ids):
-  for i in range(291):
+  for i in range(STEPS):
     if (motor_ids[0]):
       kit1.stepper1.onestep()
     if (motor_ids[1]):
