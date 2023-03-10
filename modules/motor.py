@@ -57,7 +57,6 @@ def send_motor_instructions(motor_instructions):
       print("Elevator Lowered")
 
   print("End")
-  exit()
 
 def turn_elevator_motor(direction=stepper.FORWARD):
   for i in range(STEPS * 3):
@@ -81,3 +80,4 @@ def turn_motors(motor_ids):
 if __name__ == "__main__":
   motor_instructions = ['001010', '001110', '011010', '011001', '000111', '111000']
   send_motor_instructions(motor_instructions)
+  exit()

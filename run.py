@@ -125,10 +125,10 @@ if __name__ == "__main__":
     # Conversion to motor instructions
     pointer = 6
     while pointer <= len(output_braille):
-    	output_motor = braille_to_motor(output_braille[pointer-6:pointer])
-    	print(f"Motor Output: {output_motor}")
-
-    	send_motor_instructions(output_motor)
+        output_motor = braille_to_motor(output_braille[pointer-6:pointer])
+        print(f"Motor Output: {output_motor}")
+        
+        send_motor_instructions(output_motor)
         pointer += 6
 
     # Conversion to audio
