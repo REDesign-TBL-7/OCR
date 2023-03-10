@@ -123,10 +123,13 @@ if __name__ == "__main__":
     print(convertText(output_string))
 
     # Conversion to motor instructions
-    output_motor = braille_to_motor(output_braille[:6])
-    print(f"Motor Output: {output_motor}")
+    pointer = 6
+    while pointer <= len(output_braille):
+    	output_motor = braille_to_motor(output_braille[pointer-6:pointer])
+    	print(f"Motor Output: {output_motor}")
 
-    send_motor_instructions(output_motor)
+    	send_motor_instructions(output_motor)
+        pointer += 6
 
     # Conversion to audio
     # language = 'en'
