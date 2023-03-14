@@ -6,3 +6,4 @@ numpy
 pybraille
 gtts
 adafruit-circuitpython-motorkit
+picamera
