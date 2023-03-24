@@ -21,10 +21,10 @@ def send_motor_instructions(motor_instructions):
   print(f"Motor Instructions: {motor_instructions}")
 
   motors_executed_count = 0
-  while motors_executed_count != 6:
+  while motors_executed_count != 3:
     print(motor_instructions)
     motors_done_count = 0
-    while motors_done_count != 6:
+    while motors_done_count != 3:
       motors_done_count = 0
 
       motors_to_turn = {
