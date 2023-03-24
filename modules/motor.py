@@ -10,6 +10,12 @@ kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 STEPS = 340
 
+# Nothing M1 M2
+# A0 M1
+
+# A0 M3
+# A1 M1
+
 def send_motor_instructions(motor_instructions):
   global down
   print(f"Motor Instructions: {motor_instructions}")
@@ -20,6 +26,7 @@ def send_motor_instructions(motor_instructions):
     motors_done_count = 0
     while motors_done_count != 6:
       motors_done_count = 0
+
       motors_to_turn = {
         0: False,
         1: False,
@@ -29,6 +36,7 @@ def send_motor_instructions(motor_instructions):
         5: False,
         6: False
       }
+
       for i in range(len(motor_instructions)):
         motor_instruction = motor_instructions[i]
         if motor_instruction == "" or down and motor_instruction[0] == "1" or not down and motor_instruction[0] == "0":
@@ -61,12 +69,12 @@ def send_motor_instructions(motor_instructions):
 def turn_elevator_motor(direction=stepper.FORWARD):
   if direction == stepper.FORWARD:
     for i in range(STEPS * 3):
-      kit3.stepper2.onestep(direction=stepper.BACKWARD)
-      kit4.stepper1.onestep(direction=direction)
+      kit2.stepper2.onestep(direction=stepper.BACKWARD)
+      kit3.stepper1.onestep(direction=direction)
   elif direction == stepper.BACKWARD:
     for i in range(STEPS * 3):
-      kit3.stepper2.onestep(direction=stepper.FORWARD)
-      kit4.stepper1.onestep(direction=direction)
+      kit2.stepper2.onestep(direction=stepper.FORWARD)
+      kit3.stepper1.onestep(direction=direction)
 
 def turn_motors(motor_ids):
   for i in range(STEPS):
@@ -84,6 +92,6 @@ def turn_motors(motor_ids):
       kit3.stepper2.onestep()
 
 if __name__ == "__main__":
-  motor_instructions = ['001010', '001110', '011010', '011001', '000111', '111000']
+  motor_instructions = ['001010', '001110', '011010']
   send_motor_instructions(motor_instructions)
   exit()
