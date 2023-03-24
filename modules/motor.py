@@ -10,11 +10,11 @@ kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 STEPS = 340
 
-# Nothing M1 M2 M3 M4
-# A0 M1 M2
+# 60 M1 M2 M3 M4
+# 61 M1 M2
 
-# A0 M3 M4
-# A1 M1 M2
+# 61 M3 M4
+# 62 M1 M2
 
 def send_motor_instructions(motor_instructions):
   global down
