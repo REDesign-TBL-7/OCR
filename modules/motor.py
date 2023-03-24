@@ -59,8 +59,14 @@ def send_motor_instructions(motor_instructions):
   print("End")
 
 def turn_elevator_motor(direction=stepper.FORWARD):
-  for i in range(STEPS * 3):
-    kit4.stepper1.onestep(direction=direction, style=stepper.DOUBLE)
+  if direction == stepper.FORWARD:
+    for i in range(STEPS * 3):
+      kit3.stepper2.onestep(direction=stepper.BACKWARD)
+      kit4.stepper1.onestep(direction=direction)
+  elif direction == stepper.BACKWARD:
+    for i in range(STEPS * 3):
+      kit3.stepper2.onestep(direction=stepper.FORWARD)
+      kit4.stepper1.onestep(direction=direction)
 
 def turn_motors(motor_ids):
   for i in range(STEPS):
