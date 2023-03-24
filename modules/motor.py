@@ -38,7 +38,7 @@ def send_motor_instructions(motor_instructions):
       }
 
       for i in range(len(motor_instructions)):
-        print(motor_instructions)
+        # print(motor_instructions)
         motor_instruction = motor_instructions[i]
         if motor_instruction == "" or down and motor_instruction[0] == "1" or not down and motor_instruction[0] == "0":
           motors_done_count += 1
