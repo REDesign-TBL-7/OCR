@@ -9,6 +9,7 @@ kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 STEPS = 340
+ELEVATOR_STEPS = 770
 
 # 60 M1 M2 M3 M4
 # 61 M1 M2
@@ -68,14 +69,9 @@ def send_motor_instructions(motor_instructions):
   print("End")
 
 def turn_elevator_motor(direction=stepper.FORWARD):
-  if direction == stepper.FORWARD:
-    for i in range(STEPS * 3):
-      kit2.stepper2.onestep(direction=stepper.BACKWARD)
-      kit3.stepper1.onestep(direction=direction)
-  elif direction == stepper.BACKWARD:
-    for i in range(STEPS * 3):
-      kit2.stepper2.onestep(direction=stepper.FORWARD)
-      kit3.stepper1.onestep(direction=direction)
+  for i in range(ELEVATOR_STEPS):
+    kit2.stepper2.onestep(direction=direction, style=stepper.DOUBLE)
+    kit3.stepper1.onestep(direction=direction, style=stepper.DOUBLE)
 
 def turn_motors(motor_ids):
   for i in range(STEPS):
