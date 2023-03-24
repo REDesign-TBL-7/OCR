@@ -84,12 +84,12 @@ def turn_motors(motor_ids):
       kit1.stepper2.onestep()
     if (motor_ids[2]):
       kit2.stepper1.onestep()
-    if (motor_ids[3]):
-      kit2.stepper2.onestep()
-    if (motor_ids[4]):
-      kit3.stepper1.onestep()
-    if (motor_ids[5]):
-      kit3.stepper2.onestep()
+    # if (motor_ids[3]):
+    #   kit2.stepper2.onestep()
+    # if (motor_ids[4]):
+    #   kit3.stepper1.onestep()
+    # if (motor_ids[5]):
+    #   kit3.stepper2.onestep()
 
 if __name__ == "__main__":
   motor_instructions = ['001010', '001110', '011010']
