@@ -10,11 +10,11 @@ kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 STEPS = 340
 
-# Nothing M1 M2
-# A0 M1
+# Nothing M1 M2 M3 M4
+# A0 M1 M2
 
-# A0 M3
-# A1 M1
+# A0 M3 M4
+# A1 M1 M2
 
 def send_motor_instructions(motor_instructions):
   global down
@@ -25,8 +25,8 @@ def send_motor_instructions(motor_instructions):
     print(motor_instructions)
     motors_done_count = 0
     while motors_done_count != 3:
+      
       motors_done_count = 0
-
       motors_to_turn = {
         0: False,
         1: False,
@@ -38,6 +38,7 @@ def send_motor_instructions(motor_instructions):
       }
 
       for i in range(len(motor_instructions)):
+        print(motor_instructions)
         motor_instruction = motor_instructions[i]
         if motor_instruction == "" or down and motor_instruction[0] == "1" or not down and motor_instruction[0] == "0":
           motors_done_count += 1
