@@ -96,7 +96,7 @@ def braille_to_motor(braille_input):
         motor_output[-2] += char[2:4]
         motor_output[-1] += char[4:6]
     return motor_output
-            
+
 
 if __name__ == "__main__":
     # camera = PiCamera()
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     img = cv2.imread("images/1.jpg")
 
     # Read from file
-    # img = cv2.imread("images/4.jpg")
+    # img = cv2.imread("images/image.jpg")
 
     d = pytesseract.image_to_data(img, output_type=Output.DICT)
     n_boxes = len(d['text'])
@@ -140,12 +140,15 @@ if __name__ == "__main__":
 
     # Conversion to motor instructions
     pointer = 3
+    prev_state = ['000000', '000000', '000000']
     while pointer <= len(output_braille):
         output_motor = braille_to_motor(output_braille[pointer-3:pointer])
+        output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
         print(f"Motor Output: {output_motor}")
         
         # send_motor_instructions(output_motor)
         pointer += 3
+        prev_state = output_motor
 
     # Conversion to audio
     # language = 'en'
