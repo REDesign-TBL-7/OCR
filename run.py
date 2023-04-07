@@ -99,12 +99,17 @@ def braille_to_motor(braille_input):
             
 
 if __name__ == "__main__":
-    camera = PiCamera()
-    camera.start_preview()
-    camera.rotation = 180 # Depends how we eventually orientate the camera
-    camera.capture("images/image.jpg")
-    camera.stop_preview()
-    img = cv2.imread("images/image.jpg")
+    # camera = PiCamera()
+    # camera.start_preview()
+    # camera.rotation = 180 # Depends how we eventually orientate the camera
+    # camera.capture("images/image.jpg")
+    # camera.stop_preview()
+
+    # Read from camera
+    img = cv2.imread("images/1.jpg")
+
+    # Read from file
+    # img = cv2.imread("images/4.jpg")
 
     d = pytesseract.image_to_data(img, output_type=Output.DICT)
     n_boxes = len(d['text'])
@@ -132,14 +137,14 @@ if __name__ == "__main__":
     # print(convertText(output_string))
     
     # TODO: uncomment this later
-    '''
+
     # Conversion to motor instructions
     pointer = 3
     while pointer <= len(output_braille):
         output_motor = braille_to_motor(output_braille[pointer-3:pointer])
         print(f"Motor Output: {output_motor}")
         
-        send_motor_instructions(output_motor)
+        # send_motor_instructions(output_motor)
         pointer += 3
 
     # Conversion to audio
@@ -147,7 +152,7 @@ if __name__ == "__main__":
     # myobj = gTTS(text=output_string, lang=language, slow=False)
     # myobj.save("welcome.mp3")
     # os.system("mpg321 welcome.mp3")
-    '''
+
     # Show image
     cv2.imshow('img', img)
     cv2.waitKey(0)

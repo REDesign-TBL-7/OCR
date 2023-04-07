@@ -9,7 +9,7 @@ kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 STEPS = 340
-ELEVATOR_STEPS = 770
+ELEVATOR_STEPS = 170
 MOTOR_COUNT = 3
 
 # 60 M1 M2 M3 M4
@@ -60,6 +60,9 @@ def send_motor_instructions(motor_instructions):
         if motor_instructions[i] == "":
           motors_executed_count += 1
 
+      if not down: # Edit elevator microstepping here
+        turn_elevator_motor(style=stepper.MICROSTEP)
+
       turn_motors(motors_to_turn)
 
     if down:
@@ -77,7 +80,7 @@ def send_motor_instructions(motor_instructions):
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
-    kit2.stepper2.onestep(direction=direction, style=style)
+    kit3.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
     kit3.stepper1.onestep(direction=direction, style=style)
 
 def turn_motors(motor_ids):
