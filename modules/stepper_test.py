@@ -27,13 +27,13 @@ kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 
 kit1.stepper1.throttle = args.throttle[0] if args.throttle else 1 
-kit1.stepper2.throttle = args.throttle[1] if len(args.throttle) >= 2 else 1
-kit2.stepper1.throttle = args.throttle[2] if len(args.throttle) >= 3 else 1
-kit2.stepper2.throttle = args.throttle[3] if len(args.throttle) >= 4 else 1
-kit3.stepper1.throttle = args.throttle[4] if len(args.throttle) >= 5 else 1
-kit3.stepper2.throttle = args.throttle[5] if len(args.throttle) >= 6 else 1
-kit4.stepper1.throttle = args.throttle[6] if len(args.throttle) >= 7 else 1
-kit4.stepper2.throttle = args.throttle[7] if len(args.throttle) >= 8 else 1
+kit1.stepper2.throttle = args.throttle[1] if args.throttle and len(args.throttle) >= 2 else 1
+kit2.stepper1.throttle = args.throttle[2] if args.throttle and len(args.throttle) >= 3 else 1
+kit2.stepper2.throttle = args.throttle[3] if args.throttle and len(args.throttle) >= 4 else 1
+kit3.stepper1.throttle = args.throttle[4] if args.throttle and len(args.throttle) >= 5 else 1
+kit3.stepper2.throttle = args.throttle[5] if args.throttle and len(args.throttle) >= 6 else 1
+kit4.stepper1.throttle = args.throttle[6] if args.throttle and len(args.throttle) >= 7 else 1
+kit4.stepper2.throttle = args.throttle[7] if args.throttle and len(args.throttle) >= 8 else 1
 
 def turn_stepper(motor_set, style):
     if 0 in motor_set:
