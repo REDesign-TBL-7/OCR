@@ -9,12 +9,22 @@ parser.add_argument("--steps", type=int, help="number of steps to turn (One revo
 parser.add_argument("-d", "--double", nargs="*", type=int, help="IDs of Motors to double turn")
 parser.add_argument("-s", "--single", nargs="*", type=int, help="IDs of Motors to single turn")
 parser.add_argument("-m", "--micro", nargs="*", type=int, help="IDs of Motors to micro turn")
+parser.add_argument("-t", "--throttle", nargs="*", type=int, help="Throttle of motors from 0 to 1")
 
 args = parser.parse_args()
 
 d_motor_set = set(args.double) if args.double else set()
 s_motor_set = set(args.single) if args.single else set()
 m_motor_set = set(args.micro) if args.micro else set()
+
+kit1.stepper1.throttle = args.throttle[0] if args.throttle else 1 
+kit1.stepper2.throttle = args.throttle[1] if len(args.throttle) >= 2 else 1
+kit2.stepper1.throttle = args.throttle[2] if len(args.throttle) >= 3 else 1
+kit2.stepper2.throttle = args.throttle[3] if len(args.throttle) >= 4 else 1
+kit3.stepper1.throttle = args.throttle[4] if len(args.throttle) >= 5 else 1
+kit3.stepper2.throttle = args.throttle[5] if len(args.throttle) >= 6 else 1
+kit4.stepper1.throttle = args.throttle[6] if len(args.throttle) >= 7 else 1
+kit4.stepper2.throttle = args.throttle[7] if len(args.throttle) >= 8 else 1
 
 # style = stepper.DOUBLE if args.double else stepper.SINGLE
 direction = stepper.BACKWARD if args.backward else stepper.FORWARD
