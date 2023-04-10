@@ -9,7 +9,7 @@ from gtts import gTTS
 import os
 
 # TODO: uncomment this later
-# from modules.motor import *
+from modules.motor import *
 
 code_table = {
     'a': '100000',
@@ -99,17 +99,17 @@ def braille_to_motor(braille_input):
 
 
 if __name__ == "__main__":
-    # camera = PiCamera()
-    # camera.start_preview()
-    # camera.rotation = 180 # Depends how we eventually orientate the camera
-    # camera.capture("images/image.jpg")
-    # camera.stop_preview()
+    camera = PiCamera()
+    camera.start_preview()
+    camera.rotation = 180 # Depends how we eventually orientate the camera
+    camera.capture("images/image.jpg")
+    camera.stop_preview()
 
     # Read from camera
-    img = cv2.imread("images/1.jpg")
+    # img = cv2.imread("images/1.jpg")
 
     # Read from file
-    # img = cv2.imread("images/image.jpg")
+    img = cv2.imread("images/image.jpg")
 
     d = pytesseract.image_to_data(img, output_type=Output.DICT)
     n_boxes = len(d['text'])
@@ -157,5 +157,6 @@ if __name__ == "__main__":
     # os.system("mpg321 welcome.mp3")
 
     # Show image
+    cv2.imwrite('images/image_ocr.jpg', img)
     cv2.imshow('img', img)
     cv2.waitKey(0)
