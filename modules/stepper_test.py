@@ -17,14 +17,6 @@ d_motor_set = set(args.double) if args.double else set()
 s_motor_set = set(args.single) if args.single else set()
 m_motor_set = set(args.micro) if args.micro else set()
 
-kit1.stepper1.throttle = args.throttle[0] if args.throttle else 1 
-kit1.stepper2.throttle = args.throttle[1] if len(args.throttle) >= 2 else 1
-kit2.stepper1.throttle = args.throttle[2] if len(args.throttle) >= 3 else 1
-kit2.stepper2.throttle = args.throttle[3] if len(args.throttle) >= 4 else 1
-kit3.stepper1.throttle = args.throttle[4] if len(args.throttle) >= 5 else 1
-kit3.stepper2.throttle = args.throttle[5] if len(args.throttle) >= 6 else 1
-kit4.stepper1.throttle = args.throttle[6] if len(args.throttle) >= 7 else 1
-kit4.stepper2.throttle = args.throttle[7] if len(args.throttle) >= 8 else 1
 
 # style = stepper.DOUBLE if args.double else stepper.SINGLE
 direction = stepper.BACKWARD if args.backward else stepper.FORWARD
@@ -33,6 +25,15 @@ kit1 = MotorKit(address=0x60)
 kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
+
+kit1.stepper1.throttle = args.throttle[0] if args.throttle else 1 
+kit1.stepper2.throttle = args.throttle[1] if len(args.throttle) >= 2 else 1
+kit2.stepper1.throttle = args.throttle[2] if len(args.throttle) >= 3 else 1
+kit2.stepper2.throttle = args.throttle[3] if len(args.throttle) >= 4 else 1
+kit3.stepper1.throttle = args.throttle[4] if len(args.throttle) >= 5 else 1
+kit3.stepper2.throttle = args.throttle[5] if len(args.throttle) >= 6 else 1
+kit4.stepper1.throttle = args.throttle[6] if len(args.throttle) >= 7 else 1
+kit4.stepper2.throttle = args.throttle[7] if len(args.throttle) >= 8 else 1
 
 def turn_stepper(motor_set, style):
     if 0 in motor_set:
