@@ -11,11 +11,13 @@ kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 
-kit1.stepper1.throttle = 1
-kit1.stepper2.throttle = 1
-kit2.stepper1.throttle = 1
-kit2.stepper2.throttle = 1
-kit3.stepper1.throttle = 1
-kit3.stepper2.throttle = 1
-kit4.stepper1.throttle = 1
-kit4.stepper2.throttle = 1
+while True:
+  kit1.stepper1.throttle = 1
+  kit1.stepper2.throttle = 1
+  kit2.stepper1.throttle = 1
+  kit2.stepper2.throttle = 1
+  kit3.stepper1.throttle = 1
+  kit3.stepper2.throttle = 1
+  kit4.stepper1.throttle = 1
+  kit4.stepper2.throttle = 1
+  time.sleep(1)
