@@ -9,7 +9,7 @@ from gtts import gTTS
 import os
 
 # TODO: uncomment this later
-from modules.motor import *
+# from modules.motor import *
 from gpiozero import Button
 
 # Peripherals
@@ -118,6 +118,8 @@ def braille_to_motor(braille_input):
 def capture_image():
     global output_braille, pointer, prev_state
 
+    print("Capturing Image...")
+
     camera.start_preview()
     camera.rotation = 180 # Depends how we eventually orientate the camera
     camera.capture("images/image.jpg")
@@ -131,6 +133,7 @@ def capture_image():
 
     d = pytesseract.image_to_data(img, output_type=Output.DICT)
     n_boxes = len(d['text'])
+
     output_string = ""
     for i in range(n_boxes):
         if int(d['conf'][i]) > 60:
@@ -141,10 +144,11 @@ def capture_image():
                 output_string += text + " "
                 img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+    print(f"String Output Bef: {output_string}")
 
     # String processing
     output_string = string_processing(output_string)
-    print(f"String Output: {output_string}")
+    print(f"String Output Aft: {output_string}")
     # print(f"String Output: {output_string}")
 
     # Conversion to list of braille
@@ -177,5 +181,33 @@ def capture_image():
     cv2.imshow('img', img)
     cv2.waitKey(0)
 
-while True:
-    pass
+def next_chars():
+    global pointer, output_braille, prev_state
+    pointer += 3
+    output_motor = braille_to_motor(output_braille[pointer-3:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x>
+    print(f"Motor Output: {output_motor}")
+
+    # send_motor_instructions(output_motor)
+    prev_state = output_motor
+
+def prev_chars():
+    global pointer, output_braille, prev_state
+    pointer -= 3
+    output_motor = braille_to_motor(output_braille[pointer-3:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x>
+    print(f"Motor Output: {output_motor}")
+
+    # send_motor_instructions(output_motor)
+    prev_state = output_motor
+
+
+if __name__ == "__main__":
+    print("Running program")
+
+    picture_button.when_pressed = capture_image
+    next_button.when_pressed = next_chars
+    prev_button.when_pressed = prev_chars
+
+    while True:
+        pass
