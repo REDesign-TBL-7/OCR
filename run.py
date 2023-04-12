@@ -12,8 +12,17 @@ import os
 from modules.motor import *
 from gpiozero import Button
 
-PICTURE_BUTTON_PIN = 4
-picture_button = Button(PICTURE_BUTTON_PIN)
+# Peripherals
+PICTURE_PIN = 2
+picture_button = Button(PICTURE_PIN)
+
+NEXT_PIN = 3
+next_button = Button(NEXT_PIN)
+
+PREV_PIN = 4
+prev_button = Button(PREV_PIN)
+
+camera = PiCamera()
 
 code_table = {
     'a': '100000',
@@ -65,7 +74,12 @@ code_table = {
     '#': '001111',
     'Capital': '000001',
     'Letter': '000011',
-    ' ': '000000'}
+    ' ': '000000'
+}
+
+output_braille = []
+prev_state = ['000000', '000000', '000000']
+pointer = 3
 
 # removes all special characters and double spacing
 def string_processing(string_input):
@@ -101,19 +115,19 @@ def braille_to_motor(braille_input):
         motor_output[-1] += char[4:6]
     return motor_output
 
+def capture_image():
+    global output_braille, pointer, prev_state
 
-if __name__ == "__main__":
-    camera = PiCamera()
     camera.start_preview()
     camera.rotation = 180 # Depends how we eventually orientate the camera
     camera.capture("images/image.jpg")
     camera.stop_preview()
 
     # Read from camera
-    # img = cv2.imread("images/1.jpg")
+    img = cv2.imread("images/image.jpg")
 
     # Read from file
-    img = cv2.imread("images/image.jpg")
+    # img = cv2.imread("images/1.jpg")
 
     d = pytesseract.image_to_data(img, output_type=Output.DICT)
     n_boxes = len(d['text'])
@@ -122,6 +136,7 @@ if __name__ == "__main__":
         if int(d['conf'][i]) > 60:
             (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
             # don't show empty text
+            
             if text and text.strip() != "":
                 output_string += text + " "
                 img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -130,7 +145,6 @@ if __name__ == "__main__":
     # String processing
     output_string = string_processing(output_string)
     print(f"String Output: {output_string}")
-    output_string = output_string[:10]
     # print(f"String Output: {output_string}")
 
     # Conversion to list of braille
@@ -139,20 +153,18 @@ if __name__ == "__main__":
 
     # Conversion to braille image
     # print(convertText(output_string))
-    
-    # TODO: uncomment this later
 
     # Conversion to motor instructions
     pointer = 3
     prev_state = ['000000', '000000', '000000']
-    while pointer <= len(output_braille):
-        output_motor = braille_to_motor(output_braille[pointer-3:pointer])
-        output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
-        print(f"Motor Output: {output_motor}")
-        
-        # send_motor_instructions(output_motor)
-        pointer += 3
-        prev_state = output_motor
+    # while pointer <= len(output_braille):
+    output_motor = braille_to_motor(output_braille[pointer-3:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
+    print(f"Motor Output: {output_motor}")
+    
+    # send_motor_instructions(output_motor)
+    # pointer += 3
+    prev_state = output_motor
 
     # Conversion to audio
     # language = 'en'
@@ -164,3 +176,6 @@ if __name__ == "__main__":
     cv2.imwrite('images/image_ocr.jpg', img)
     cv2.imshow('img', img)
     cv2.waitKey(0)
+
+while True:
+    pass
