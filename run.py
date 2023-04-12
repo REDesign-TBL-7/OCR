@@ -162,13 +162,14 @@ def capture_image():
     pointer = 3
     prev_state = ['000000', '000000', '000000']
     # while pointer <= len(output_braille):
-    output_motor = braille_to_motor(output_braille[pointer-3:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
-    print(f"Motor Output: {output_motor}")
-    
+    curr_state = braille_to_motor(output_braille[pointer-3:pointer])
+
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
+    print(f"Motor Output: {output_motor} | Batch: {pointer // 3}")
+
     # send_motor_instructions(output_motor)
     # pointer += 3
-    prev_state = output_motor
+    prev_state = curr_state
 
     # Conversion to audio
     # language = 'en'
@@ -176,31 +177,35 @@ def capture_image():
     # myobj.save("welcome.mp3")
     # os.system("mpg321 welcome.mp3")
 
-    # Show image
+    # Save image
     cv2.imwrite('images/image_ocr.jpg', img)
-    cv2.imshow('img', img)
-    cv2.waitKey(0)
 
 def next_chars():
     global pointer, output_braille, prev_state
+    if pointer > len(output_braille):
+        return
+    elif pointer > len(output_braille) - 3:
+        print("End of Output")
     pointer += 3
-    output_motor = braille_to_motor(output_braille[pointer-3:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
-    print(f"Motor Output: {output_motor}")
+    curr_state = braille_to_motor(output_braille[pointer-3:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
+    print(f"Motor Output: {output_motor} | Batch: {pointer // 3}")
 
     # send_motor_instructions(output_motor)
-    prev_state = output_motor
+    prev_state = curr_state
 
 def prev_chars():
     global pointer, output_braille, prev_state
+    if pointer <= 3:
+        return
+
     pointer -= 3
-    output_motor = braille_to_motor(output_braille[pointer-3:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
-    print(f"Motor Output: {output_motor}")
+    curr_state = braille_to_motor(output_braille[pointer-3:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
+    print(f"Motor Output: {output_motor} | Batch: {pointer // 3}")
 
     # send_motor_instructions(output_motor)
-    prev_state = output_motor
-
+    prev_state = curr_state
 
 if __name__ == "__main__":
     print("Running program")
