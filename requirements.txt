@@ -7,3 +7,4 @@ pybraille
 gtts
 adafruit-circuitpython-motorkit
 picamera
+gpiozero

@@ -10,6 +10,10 @@ import os
 
 # TODO: uncomment this later
 from modules.motor import *
+from gpiozero import Button
+
+PICTURE_BUTTON_PIN = 4
+picture_button = Button(PICTURE_BUTTON_PIN)
 
 code_table = {
     'a': '100000',
