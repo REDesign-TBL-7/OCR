@@ -185,7 +185,7 @@ def next_chars():
     global pointer, output_braille, prev_state
     pointer += 3
     output_motor = braille_to_motor(output_braille[pointer-3:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x>
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
     print(f"Motor Output: {output_motor}")
 
     # send_motor_instructions(output_motor)
@@ -195,7 +195,7 @@ def prev_chars():
     global pointer, output_braille, prev_state
     pointer -= 3
     output_motor = braille_to_motor(output_braille[pointer-3:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x>
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(output_motor, prev_state)]
     print(f"Motor Output: {output_motor}")
 
     # send_motor_instructions(output_motor)
