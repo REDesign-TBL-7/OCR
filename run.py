@@ -120,6 +120,7 @@ def braille_to_motor(braille_input):
     return motor_output
 
 def capture_image_backup():
+    global pointer, prev_state, output_braille
     print("Capturing Image...")
 
     camera.start_preview()
@@ -162,16 +163,19 @@ def capture_image_backup():
 
     # Conversion to motor instructions
     pointer = 1
+    prev_state = ['00', '00', '00']
 
     # while pointer <= len(output_braille):
-    output_motor = braille_to_motor(output_braille[pointer-1:pointer])
+    curr_state = braille_to_motor(output_braille[pointer-1:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
+    prev_state = curr_state
 
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
-
-    send_motor_instructions_backup(output_motor)
-
     # Save image
     cv2.imwrite('images/image_ocr.jpg', img)
+
+    send_motor_instructions_backup(output_motor)
+    turn_elevator_motor()
 
 def capture_image():
     global output_braille, pointer, prev_state
@@ -258,10 +262,13 @@ def next_chars_backup():
     elif pointer > len(output_braille) - 1:
         print("End of Output")
     pointer += 1
-    output_motor = braille_to_motor(output_braille[pointer-1:pointer])
+    curr_state = braille_to_motor(output_braille[pointer-1:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
+    turn_elevator_motor(direction=stepper.BACKWARD)
     send_motor_instructions_backup(output_motor)
+    turn_elevator_motor()
 
 def prev_chars():
     global pointer, output_braille, prev_state
@@ -282,10 +289,13 @@ def prev_chars_backup():
         return
 
     pointer -= 1
-    output_motor = braille_to_motor(output_braille[pointer-1:pointer])
+    curr_state = braille_to_motor(output_braille[pointer-1:pointer])
+    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
+    turn_elevator_motor(direction=stepper.BACKWARD)
     send_motor_instructions_backup(output_motor)
+    turn_elevator_motor()
 
 if __name__ == "__main__":
     print("Running program")
