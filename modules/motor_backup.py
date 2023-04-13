@@ -27,11 +27,16 @@ def send_motor_instructions(motor_instructions):
   for instruction in motor_instructions:
     motor_steps.append(CONFIG_MAP[instruction])
 
-  turn_motors(motor_steps)
+  turn_motors(motor_steps) # Turn Motors
   turn_elevator_motor()
   time.sleep(5)
   turn_elevator_motor(direction=stepper.BACKWARD)
-  
+  time.sleep(5)
+
+  for i in range(len(motor_steps)):
+    motor_steps[i] = MOTOR_STEPS - motor_steps[i]
+
+  turn_motors(motor_steps) # Reset Motors
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
