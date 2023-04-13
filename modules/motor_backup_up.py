@@ -33,15 +33,15 @@ def send_motor_instructions_backup(motor_instructions):
   turn_elevator_motor()
   time.sleep(5)
 
-  print("Moving Down...")
-  turn_elevator_motor(direction=stepper.BACKWARD)
-  time.sleep(5)
+  # print("Moving Down...")
+  # turn_elevator_motor(direction=stepper.BACKWARD)
+  # time.sleep(5)
 
-  for i in range(len(motor_steps)):
-    motor_steps[i] = MOTOR_STEPS - motor_steps[i] if motor_steps[i] > 0 else 0
+  # for i in range(len(motor_steps)):
+  #   motor_steps[i] = MOTOR_STEPS - motor_steps[i] if motor_steps[i] > 0 else 0
 
-  print(f"Resetting Motors... {motor_steps}")
-  turn_motors(motor_steps.copy()) # Reset Motors
+  # print(f"Resetting Motors... {motor_steps}")
+  # turn_motors(motor_steps.copy()) # Reset Motors
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):

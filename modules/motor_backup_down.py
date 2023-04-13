@@ -26,12 +26,12 @@ def send_motor_instructions_backup(motor_instructions):
   for instruction in motor_instructions:
     motor_steps.append(CONFIG_MAP[instruction])
 
-  print(f"Turning 5V Steppers... {motor_steps}")
-  turn_motors(motor_steps.copy()) # Turn Motors
+  # print(f"Turning 5V Steppers... {motor_steps}")
+  # turn_motors(motor_steps.copy()) # Turn Motors
 
-  print("Moving Up...")
-  turn_elevator_motor()
-  time.sleep(5)
+  # print("Moving Up...")
+  # turn_elevator_motor()
+  # time.sleep(5)
 
   print("Moving Down...")
   turn_elevator_motor(direction=stepper.BACKWARD)

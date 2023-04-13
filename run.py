@@ -350,7 +350,9 @@ def turn_motors(motor_steps, direction=stepper.FORWARD):
 
 if __name__ == "__main__":
     print("Running program")
-
+    motor_instructions = ['00', '01', '11']
+    send_motor_instructions_backup(motor_instructions)
+    
     picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
     next_button.when_pressed = next_chars_backup if BACKUP else next_chars
     prev_button.when_pressed = prev_chars_backup if BACKUP else prev_chars
