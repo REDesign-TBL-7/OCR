@@ -33,3 +33,5 @@ python3 testing.py
 ```console
 deactivate
 ```
+
+https://github.com/mannbro/PicoDFPlayer.git
