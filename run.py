@@ -168,7 +168,6 @@ def capture_image():
     print(f"Motor Output: {output_motor} | Batch: {pointer // 3}")
 
     # send_motor_instructions(output_motor)
-    # pointer += 3
     prev_state = curr_state
 
     # Conversion to audio

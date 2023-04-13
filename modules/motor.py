@@ -1,6 +1,7 @@
 import time
-from adafruit_motorkit import MotorKit
+import math
 import board
+from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 
 down = True
@@ -8,15 +9,11 @@ kit1 = MotorKit(address=0x60)
 kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
-STEPS = 340
+
+REVOLUTION = 2038
+MOTOR_STEPS = 6
 ELEVATOR_STEPS = 170
 MOTOR_COUNT = 3
-
-# 60 M1 M2 M3 M4
-# 61 M1 M2
-
-# 61 M3 M4
-# 62 M1 M2
 
 def send_motor_instructions(motor_instructions):
   global down
@@ -84,8 +81,7 @@ def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
     kit3.stepper1.onestep(direction=direction, style=style)
 
 def turn_motors(motor_ids):
-  for i in range(STEPS):
-
+  for i in range(math.ceil(REVOLUTION/MOTOR_STEPS)):
     # Map motor id 0 to A0 M1
     if (motor_ids[0]):
       kit1.stepper1.onestep()
