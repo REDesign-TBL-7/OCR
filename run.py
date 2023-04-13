@@ -17,6 +17,7 @@ kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 
+BACKUP = True
 # TODO: uncomment this later
 # from modules.motor import *
 # from modules.motor_backup import *
@@ -25,10 +26,12 @@ import math
 import board
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
-
-BACKUP = True
-
 from gpiozero import Button
+
+kit1 = MotorKit(address=0x60)
+kit2 = MotorKit(address=0x61)
+kit3 = MotorKit(address=0x62)
+kit4 = MotorKit(address=0x63)
 
 # Peripherals
 PICTURE_PIN = 2
@@ -98,11 +101,6 @@ code_table = {
 output_braille = []
 prev_state = ['000000', '000000', '000000']
 pointer = 3
-
-kit1 = MotorKit(address=0x60)
-kit2 = MotorKit(address=0x61)
-kit3 = MotorKit(address=0x62)
-kit4 = MotorKit(address=0x63)
 
 REVOLUTION = 2038
 MOTOR_STEPS = 4
