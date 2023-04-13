@@ -174,8 +174,9 @@ def capture_image_backup():
     # Save image
     cv2.imwrite('images/image_ocr.jpg', img)
 
-    send_motor_instructions_backup(output_motor)
-    turn_elevator_motor()
+    if len(output_motor):
+        send_motor_instructions_backup(output_motor)
+        turn_elevator_motor()
 
 def capture_image():
     global output_braille, pointer, prev_state
@@ -299,7 +300,8 @@ def prev_chars_backup():
 
 if __name__ == "__main__":
     print("Running program")
-
+    # send_motor_instructions_backup(['01','11','10'])
+    # turn_elevator_motor()
     picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
     next_button.when_pressed = next_chars_backup if BACKUP else next_chars
     prev_button.when_pressed = prev_chars_backup if BACKUP else prev_chars
