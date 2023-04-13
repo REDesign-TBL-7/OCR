@@ -10,6 +10,7 @@ import os
 
 # TODO: uncomment this later
 # from modules.motor import *
+# from modules.motor_backup import *
 from gpiozero import Button
 
 # Peripherals
@@ -115,6 +116,60 @@ def braille_to_motor(braille_input):
         motor_output[-1] += char[4:6]
     return motor_output
 
+def capture_image_backup():
+    print("Capturing Image...")
+
+    camera.start_preview()
+    camera.rotation = 180 # Depends how we eventually orientate the camera
+    camera.capture("images/image.jpg")
+    camera.stop_preview()
+
+    # Read from camera
+    img = cv2.imread("images/image.jpg")
+
+    # Read from file
+    # img = cv2.imread("images/1.jpg")
+
+    d = pytesseract.image_to_data(img, output_type=Output.DICT)
+    n_boxes = len(d['text'])
+
+    output_string = ""
+    for i in range(n_boxes):
+        if int(d['conf'][i]) > 60:
+            (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+            # don't show empty text
+            
+            if text and text.strip() != "":
+                output_string += text + " "
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+    print(f"String Output Bef: {output_string}")
+
+    # String processing
+    output_string = string_processing(output_string)
+    print(f"String Output Aft: {output_string}")
+    # print(f"String Output: {output_string}")
+
+    # Conversion to list of braille
+    output_braille = string_to_braille(output_string)
+    print(f"Braille Output: {output_braille}")
+
+    # Conversion to braille image
+    # print(convertText(output_string))
+
+    # Conversion to motor instructions
+    pointer = 1
+
+    # while pointer <= len(output_braille):
+    output_motor = braille_to_motor(output_braille[pointer-1:pointer])
+
+    print(f"Motor Output: {output_motor} | Batch: {pointer}")
+
+    # send_motor_instructions_backup(output_motor)
+
+    # Save image
+    cv2.imwrite('images/image_ocr.jpg', img)
+
 def capture_image():
     global output_braille, pointer, prev_state
 
@@ -193,6 +248,19 @@ def next_chars():
     # send_motor_instructions(output_motor)
     prev_state = curr_state
 
+def next_chars_backup():
+    global output_braille, pointer
+    if pointer > len(output_braille):
+        return
+    elif pointer > len(output_braille) - 1:
+        print("End of Output")
+    pointer += 1
+    output_motor = braille_to_motor(output_braille[pointer-1:pointer])
+    print(f"Motor Output: {output_motor} | Batch: {pointer}")
+
+    # send_motor_instructions_backup(output_motor)
+
+
 def prev_chars():
     global pointer, output_braille, prev_state
     if pointer <= 3:
@@ -206,12 +274,23 @@ def prev_chars():
     # send_motor_instructions(output_motor)
     prev_state = curr_state
 
+def prev_chars_backup():
+    global pointer, output_braille
+    if pointer <= 1:
+        return
+    
+    pointer -= 1
+    output_motor = braille_to_motor(output_braille[pointer-1:pointer])
+    print(f"Motor Output: {output_motor} | Batch: {pointer}")
+
+    # send_motor_instructions_backup(output_motor)
+
 if __name__ == "__main__":
     print("Running program")
 
-    picture_button.when_pressed = capture_image
-    next_button.when_pressed = next_chars
-    prev_button.when_pressed = prev_chars
+    picture_button.when_pressed = capture_image_backup
+    next_button.when_pressed = next_chars_backup
+    prev_button.when_pressed = prev_chars_backup
 
     while True:
         pass

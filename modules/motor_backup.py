@@ -22,7 +22,7 @@ CONFIG_MAP = {
   '10': 3
 }
 
-def send_motor_instructions(motor_instructions):
+def send_motor_instructions_backup(motor_instructions):
   motor_steps = []
   for instruction in motor_instructions:
     motor_steps.append(CONFIG_MAP[instruction])
@@ -48,6 +48,7 @@ def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
 
 def turn_motors(motor_steps, direction=stepper.FORWARD):
   # motor_steps = [0, 1, 2] corresponding to the number of steps each motor has to turn
+  
   while max(motor_steps) != 0:
     for i in range(REVOLUTION // MOTOR_STEPS):
       if motor_steps[0] > 0:
@@ -65,5 +66,5 @@ def turn_motors(motor_steps, direction=stepper.FORWARD):
 
 if __name__ == "__main__":
   motor_instructions = ['00', '01', '11']
-  send_motor_instructions(motor_instructions)
+  send_motor_instructions_backup(motor_instructions)
   exit()
