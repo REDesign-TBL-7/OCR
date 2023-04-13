@@ -17,12 +17,23 @@ import math
 import board
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
-from gpiozero import Button
 
 kit1 = MotorKit(address=0x60)
 kit2 = MotorKit(address=0x61)
 kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
+
+REVOLUTION = 2038
+MOTOR_STEPS = 4
+ELEVATOR_STEPS = 170
+MOTOR_COUNT = 3
+
+CONFIG_MAP = {
+  '00': 0,
+  '01': 1,
+  '11': 2,
+  '10': 3
+}
 
 # Peripherals
 PICTURE_PIN = 2
@@ -92,18 +103,6 @@ code_table = {
 output_braille = []
 prev_state = ['000000', '000000', '000000']
 pointer = 3
-
-REVOLUTION = 2038
-MOTOR_STEPS = 4
-ELEVATOR_STEPS = 170
-MOTOR_COUNT = 3
-
-CONFIG_MAP = {
-  '00': 0,
-  '01': 1,
-  '11': 2,
-  '10': 3
-}
 
 # removes all special characters and double spacing
 def string_processing(string_input):
@@ -324,13 +323,16 @@ def send_motor_instructions_backup(motor_instructions):
   turn_elevator_motor(direction=stepper.BACKWARD)
   time.sleep(5)
 
+  for i in range(len(motor_steps)):
+    motor_steps[i] = MOTOR_STEPS - motor_steps[i] if motor_steps[i] > 0 else 0
+
   print(f"Resetting Motors... {motor_steps}")
-  turn_motors(motor_steps.copy(), direction=stepper.BACKWARD) # Reset Motors
+  turn_motors(motor_steps.copy()) # Reset Motors
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
-    kit3.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
-    kit3.stepper1.onestep(direction=direction, style=style)
+    kit4.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
+    kit4.stepper1.onestep(direction=direction, style=style)
 
 def turn_motors(motor_steps, direction=stepper.FORWARD):
   # motor_steps = [0, 1, 2] corresponding to the number of steps each motor has to turn
