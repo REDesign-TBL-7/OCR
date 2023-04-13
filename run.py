@@ -177,13 +177,11 @@ def capture_image_backup():
 
     motor_steps = []
     differential_steps = []
-
     for i, instruction in enumerate(curr_state):
         motor_steps.append(CONFIG_MAP[instruction])
         differential_step = CONFIG_MAP[instruction] - prev_state[i]
         differential_step %= 4
         differential_steps.append(differential_step)
-
     prev_state = motor_steps
 
     print(f"Motor Output: {differential_steps} | Batch: {pointer}")
