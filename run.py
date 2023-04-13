@@ -3,46 +3,27 @@ import cv2
 import pytesseract
 import numpy as np
 from pytesseract import Output
-from pybraille import convertText
+# from pybraille import convertText
 import re
-from gtts import gTTS
+# from gtts import gTTS
 import os
 
 BACKUP = True
+
 # TODO: uncomment this later
 # from modules.motor import *
-# from modules.motor_backup import *
-import time
-import math
-import board
-from adafruit_motorkit import MotorKit
-from adafruit_motor import stepper
+from modules.motor_backup import *
 
-kit1 = MotorKit(address=0x60)
-kit2 = MotorKit(address=0x61)
-kit3 = MotorKit(address=0x62)
-kit4 = MotorKit(address=0x63)
-
-REVOLUTION = 2038
-MOTOR_STEPS = 4
-ELEVATOR_STEPS = 170
-MOTOR_COUNT = 3
-
-CONFIG_MAP = {
-  '00': 0,
-  '01': 1,
-  '11': 2,
-  '10': 3
-}
+from gpiozero import Button
 
 # Peripherals
-PICTURE_PIN = 2
+PICTURE_PIN = 17
 picture_button = Button(PICTURE_PIN)
 
-NEXT_PIN = 3
+NEXT_PIN = 27
 next_button = Button(NEXT_PIN)
 
-PREV_PIN = 4
+PREV_PIN = 22
 prev_button = Button(PREV_PIN)
 
 camera = PiCamera()
@@ -160,7 +141,7 @@ def capture_image_backup():
         if int(d['conf'][i]) > 60:
             (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
             # don't show empty text
-            
+
             if text and text.strip() != "":
                 output_string += text + " "
                 img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -216,7 +197,7 @@ def capture_image():
         if int(d['conf'][i]) > 60:
             (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
             # don't show empty text
-            
+
             if text and text.strip() != "":
                 output_string += text + " "
                 img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -271,7 +252,7 @@ def next_chars():
     prev_state = curr_state
 
 def next_chars_backup():
-    global output_braille, pointer
+    global output_braille, pointer, prev_state
     if pointer > len(output_braille):
         return
     elif pointer > len(output_braille) - 1:
@@ -281,7 +262,6 @@ def next_chars_backup():
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
     send_motor_instructions_backup(output_motor)
-
 
 def prev_chars():
     global pointer, output_braille, prev_state
@@ -300,61 +280,16 @@ def prev_chars_backup():
     global pointer, output_braille
     if pointer <= 1:
         return
-    
+
     pointer -= 1
     output_motor = braille_to_motor(output_braille[pointer-1:pointer])
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
     send_motor_instructions_backup(output_motor)
 
-def send_motor_instructions_backup(motor_instructions):
-  motor_steps = []
-  for instruction in motor_instructions:
-    motor_steps.append(CONFIG_MAP[instruction])
-
-  print(f"Turning 5V Steppers... {motor_steps}")
-  turn_motors(motor_steps.copy()) # Turn Motors
-
-  print("Moving Up...")
-  turn_elevator_motor()
-  time.sleep(5)
-
-  print("Moving Down...")
-  turn_elevator_motor(direction=stepper.BACKWARD)
-  time.sleep(5)
-
-  for i in range(len(motor_steps)):
-    motor_steps[i] = MOTOR_STEPS - motor_steps[i] if motor_steps[i] > 0 else 0
-
-  print(f"Resetting Motors... {motor_steps}")
-  turn_motors(motor_steps.copy()) # Reset Motors
-
-def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
-  for i in range(ELEVATOR_STEPS):
-    kit4.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
-    kit4.stepper1.onestep(direction=direction, style=style)
-
-def turn_motors(motor_steps, direction=stepper.FORWARD):
-  # motor_steps = [0, 1, 2] corresponding to the number of steps each motor has to turn
-
-  while max(motor_steps) != 0:
-    for i in range(REVOLUTION // MOTOR_STEPS):
-      if motor_steps[0] > 0:
-        kit1.stepper1.onestep(direction=direction)
-      if motor_steps[1] > 0:
-        kit1.stepper2.onestep(direction=direction)
-      if motor_steps[2] > 0:
-        kit2.stepper1.onestep(direction=direction)
-    else:
-      for i in range(len(motor_steps)):
-        if motor_steps[i] > 0:
-          motor_steps[i] -= 1
-
 if __name__ == "__main__":
     print("Running program")
-    motor_instructions = ['00', '01', '11']
-    send_motor_instructions_backup(motor_instructions)
-    
+
     picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
     next_button.when_pressed = next_chars_backup if BACKUP else next_chars
     prev_button.when_pressed = prev_chars_backup if BACKUP else prev_chars
