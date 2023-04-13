@@ -27,7 +27,7 @@ def send_motor_instructions(motor_instructions):
   for instruction in motor_instructions:
     motor_steps.append(CONFIG_MAP[instruction])
 
-  print("Turning 5V Steppers...")
+  print(f"Turning 5V Steppers... {motor_steps}")
   turn_motors(motor_steps) # Turn Motors
 
   print("Moving Up...")
@@ -40,8 +40,8 @@ def send_motor_instructions(motor_instructions):
 
   for i in range(len(motor_steps)):
     motor_steps[i] = MOTOR_STEPS - motor_steps[i]
-    
-  print("Resetting Motors...")
+
+  print(f"Resetting Motors... {motor_steps}")
   turn_motors(motor_steps) # Reset Motors
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
