@@ -11,6 +11,9 @@ import os
 # TODO: uncomment this later
 # from modules.motor import *
 # from modules.motor_backup import *
+
+BACKUP = True
+
 from gpiozero import Button
 
 # Peripherals
@@ -288,9 +291,9 @@ def prev_chars_backup():
 if __name__ == "__main__":
     print("Running program")
 
-    picture_button.when_pressed = capture_image_backup
-    next_button.when_pressed = next_chars_backup
-    prev_button.when_pressed = prev_chars_backup
+    picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
+    next_button.when_pressed = next_chars_backup if BACKUP else next_chars
+    prev_button.when_pressed = prev_chars_backup if BACKUP else prev_chars
 
     while True:
         pass
