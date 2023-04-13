@@ -14,17 +14,23 @@ BACKUP = True
 # from modules.motor import *
 from modules.motor_backup import *
 
-from gpiozero import Button
+import RPi.GPIO as GPIO
+
+GPIO.setwarnings(False)
+# GPIO.setmode(GPIO.BOARD)
 
 # Peripherals
 PICTURE_PIN = 17
-picture_button = Button(PICTURE_PIN)
+# picture_button = Button(PICTURE_PIN)
+GPIO.setup(PICTURE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 NEXT_PIN = 27
-next_button = Button(NEXT_PIN)
+#next_button = Button(NEXT_PIN)
+GPIO.setup(NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 PREV_PIN = 22
-prev_button = Button(PREV_PIN)
+#prev_button = Button(PREV_PIN)
+GPIO.setup(PREV_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 camera = PiCamera()
 
@@ -188,7 +194,7 @@ def capture_image_backup():
 
     print(f"Motor Output: {differential_steps} | Batch: {pointer}")
     # Save image
-    cv2.imwrite('images/image_ocr.jpg', img)
+    # cv2.imwrite('images/image_ocr.jpg', img)
 
     turn_elevator_motor(direction=stepper.BACKWARD)
     turn_motors(differential_steps)
@@ -331,14 +337,19 @@ def prev_chars_backup():
     turn_elevator_motor(direction=stepper.BACKWARD)
     turn_motors(differential_steps)
     turn_elevator_motor()
+    
+def listen_button(button, callback):
+    button.when_pressed = callback
 
 if __name__ == "__main__":
     print("Running program")
     # send_motor_instructions_backup(['01','11','10'])
     # turn_elevator_motor()
-    picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
-    next_button.when_pressed = next_chars_backup if BACKUP else next_chars
-    prev_button.when_pressed = prev_chars_backup if BACKUP else prev_chars
+    
+    # picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
+    # next_button.when_pressed = next_chars_backup if BACKUP else next_chars
+    # prev_button.when_pressed = prev_chars_backup if BACKUP else prev_chars
 
     while True:
-        pass
+        if GPIO.input(PICTURE_PIN) == GPIO.LOW:
+            capture_image_backup()
