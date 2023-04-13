@@ -28,7 +28,7 @@ def send_motor_instructions(motor_instructions):
     motor_steps.append(CONFIG_MAP[instruction])
 
   print(f"Turning 5V Steppers... {motor_steps}")
-  turn_motors(motor_steps) # Turn Motors
+  turn_motors(motor_steps.copy()) # Turn Motors
 
   print("Moving Up...")
   turn_elevator_motor()
@@ -39,10 +39,10 @@ def send_motor_instructions(motor_instructions):
   time.sleep(5)
 
   for i in range(len(motor_steps)):
-    motor_steps[i] = MOTOR_STEPS - motor_steps[i]
+    motor_steps[i] = MOTOR_STEPS - motor_steps[i] if motor_steps[i] > 0 else 0
 
   print(f"Resetting Motors... {motor_steps}")
-  turn_motors(motor_steps) # Reset Motors
+  turn_motors(motor_steps.copy()) # Reset Motors
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
