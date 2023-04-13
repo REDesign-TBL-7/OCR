@@ -4,11 +4,6 @@ import board
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 
-kit1 = MotorKit(address=0x60)
-kit2 = MotorKit(address=0x61)
-kit3 = MotorKit(address=0x62)
-kit4 = MotorKit(address=0x63)
-
 REVOLUTION = 2038
 MOTOR_STEPS = 4
 ELEVATOR_STEPS = 170
@@ -21,31 +16,31 @@ CONFIG_MAP = {
   '10': 3
 }
 
-def send_motor_instructions_backup(motor_instructions):
+def send_motor_instructions_backup(motor_instructions, kit1, kit2, kit3, kit4):
   motor_steps = []
   for instruction in motor_instructions:
     motor_steps.append(CONFIG_MAP[instruction])
 
   print(f"Turning 5V Steppers... {motor_steps}")
-  turn_motors(motor_steps.copy()) # Turn Motors
+  turn_motors(motor_steps.copy(), kit1, kit2, kit3) # Turn Motors
 
   print("Moving Up...")
-  turn_elevator_motor()
+  turn_elevator_motor(kit4)
   time.sleep(5)
 
   print("Moving Down...")
-  turn_elevator_motor(direction=stepper.BACKWARD)
+  turn_elevator_motor(kit4, direction=stepper.BACKWARD)
   time.sleep(5)
 
   print(f"Resetting Motors... {motor_steps}")
-  turn_motors(motor_steps.copy(), direction=stepper.BACKWARD) # Reset Motors
+  turn_motors(motor_steps.copy(), kit1, kit2, kit3, direction=stepper.BACKWARD) # Reset Motors
 
-def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
+def turn_elevator_motor(kit4, direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
     kit3.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
     kit3.stepper1.onestep(direction=direction, style=style)
 
-def turn_motors(motor_steps, direction=stepper.FORWARD):
+def turn_motors(motor_steps, kit1, kit2, kit3, direction=stepper.FORWARD):
   # motor_steps = [0, 1, 2] corresponding to the number of steps each motor has to turn
 
   while max(motor_steps) != 0:
@@ -63,5 +58,10 @@ def turn_motors(motor_steps, direction=stepper.FORWARD):
 
 if __name__ == "__main__":
   motor_instructions = ['00', '01', '11']
-  send_motor_instructions_backup(motor_instructions)
+
+  kit1 = MotorKit(address=0x60)
+  kit2 = MotorKit(address=0x61)
+  kit3 = MotorKit(address=0x62)
+  kit4 = MotorKit(address=0x63)
+  send_motor_instructions_backup(motor_instructions, kit1, kit2, kit3, kit4)
   exit()

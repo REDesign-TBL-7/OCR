@@ -8,6 +8,15 @@ import re
 from gtts import gTTS
 import os
 
+import board
+from adafruit_motorkit import MotorKit
+from adafruit_motor import stepper
+
+kit1 = MotorKit(address=0x60)
+kit2 = MotorKit(address=0x61)
+kit3 = MotorKit(address=0x62)
+kit4 = MotorKit(address=0x63)
+
 # TODO: uncomment this later
 # from modules.motor import *
 from modules.motor_backup import *
@@ -168,7 +177,7 @@ def capture_image_backup():
 
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
-    # send_motor_instructions_backup(output_motor)
+    send_motor_instructions_backup(output_motor, kit1, kit2, kit3, kit4)
 
     # Save image
     cv2.imwrite('images/image_ocr.jpg', img)
@@ -261,7 +270,7 @@ def next_chars_backup():
     output_motor = braille_to_motor(output_braille[pointer-1:pointer])
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
-    # send_motor_instructions_backup(output_motor)
+    send_motor_instructions_backup(output_motor, kit1, kit2, kit3, kit4)
 
 
 def prev_chars():
@@ -286,7 +295,7 @@ def prev_chars_backup():
     output_motor = braille_to_motor(output_braille[pointer-1:pointer])
     print(f"Motor Output: {output_motor} | Batch: {pointer}")
 
-    # send_motor_instructions_backup(output_motor)
+    send_motor_instructions_backup(output_motor, kit1, kit2, kit3, kit4)
 
 if __name__ == "__main__":
     print("Running program")

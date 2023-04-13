@@ -5,17 +5,13 @@ from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 
 down = True
-kit1 = MotorKit(address=0x60)
-kit2 = MotorKit(address=0x61)
-kit3 = MotorKit(address=0x62)
-kit4 = MotorKit(address=0x63)
 
 REVOLUTION = 2038
 MOTOR_STEPS = 6
 ELEVATOR_STEPS = 170
 MOTOR_COUNT = 3
 
-def send_motor_instructions(motor_instructions):
+def send_motor_instructions(motor_instructions, kit1, kit2, kit3, kit4):
   global down
   print(f"Motor Instructions: {motor_instructions}")
 
@@ -58,29 +54,29 @@ def send_motor_instructions(motor_instructions):
           motors_executed_count += 1
 
       if not down: # Edit elevator microstepping here
-        turn_elevator_motor(style=stepper.MICROSTEP)
+        turn_elevator_motor(kit4, style=stepper.MICROSTEP)
 
-      turn_motors(motors_to_turn)
+      turn_motors(motors_to_turn, kit1, kit2, kit3)
 
     if down:
       print("Raising elevator")
-      turn_elevator_motor(direction=stepper.BACKWARD)
+      turn_elevator_motor(kit4, direction=stepper.BACKWARD)
       down = False
       print("Elevator Raised")
     else:
       print("Lowering elevator")
-      turn_elevator_motor()
+      turn_elevator_motor(kit4)
       down = True
       print("Elevator Lowered")
 
   print("End")
 
-def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
+def turn_elevator_motor(kit4, direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
-    kit3.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
-    kit3.stepper1.onestep(direction=direction, style=style)
+    kit4.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
+    kit4.stepper1.onestep(direction=direction, style=style)
 
-def turn_motors(motor_ids):
+def turn_motors(motor_ids, kit1, kit2, kit3):
   for i in range(math.ceil(REVOLUTION/MOTOR_STEPS)):
     # Map motor id 0 to A0 M1
     if (motor_ids[0]):
@@ -104,5 +100,10 @@ def turn_motors(motor_ids):
 
 if __name__ == "__main__":
   motor_instructions = ['001010', '001110', '011010']
-  send_motor_instructions(motor_instructions)
+  kit1 = MotorKit(address=0x60)
+  kit2 = MotorKit(address=0x61)
+  kit3 = MotorKit(address=0x62)
+  kit4 = MotorKit(address=0x63)
+
+  send_motor_instructions(motor_instructions, kit1, kit2, kit3, kit4)
   exit()
