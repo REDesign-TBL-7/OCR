@@ -190,6 +190,7 @@ def capture_image_backup():
     # Save image
     cv2.imwrite('images/image_ocr.jpg', img)
 
+    turn_elevator_motor(direction=stepper.BACKWARD)
     turn_motors(differential_steps)
     turn_elevator_motor()
 
