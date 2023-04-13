@@ -4,6 +4,11 @@ import board
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 
+kit1 = MotorKit(address=0x60)
+kit2 = MotorKit(address=0x61)
+kit3 = MotorKit(address=0x62)
+kit4 = MotorKit(address=0x63)
+
 REVOLUTION = 2038
 MOTOR_STEPS = 4
 ELEVATOR_STEPS = 170
@@ -58,10 +63,5 @@ def turn_motors(motor_steps, kit1, kit2, kit3, direction=stepper.FORWARD):
 
 if __name__ == "__main__":
   motor_instructions = ['00', '01', '11']
-
-  kit1 = MotorKit(address=0x60)
-  kit2 = MotorKit(address=0x61)
-  kit3 = MotorKit(address=0x62)
-  kit4 = MotorKit(address=0x63)
-  send_motor_instructions_backup(motor_instructions, kit1, kit2, kit3, kit4)
+  send_motor_instructions_backup(motor_instructions)
   exit()
