@@ -10,7 +10,7 @@ import os
 
 # TODO: uncomment this later
 # from modules.motor import *
-# from modules.motor_backup import *
+from modules.motor_backup import *
 
 BACKUP = True
 
