@@ -81,6 +81,13 @@ code_table = {
     ' ': '000000'
 }
 
+CONFIG_MAP = {
+  '00': 0,
+  '01': 1,
+  '11': 2,
+  '10': 3
+}
+
 output_braille = []
 prev_state = ['000000', '000000', '000000']
 pointer = 3
@@ -163,20 +170,27 @@ def capture_image_backup():
 
     # Conversion to motor instructions
     pointer = 1
-    prev_state = ['00', '00', '00']
+    prev_state = [0, 0, 0]
 
     # while pointer <= len(output_braille):
     curr_state = braille_to_motor(output_braille[pointer-1:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
-    prev_state = curr_state
 
-    print(f"Motor Output: {output_motor} | Batch: {pointer}")
+    motor_steps = []
+    differential_steps = []
+    for i, instruction in enumerate(curr_state):
+        motor_steps.append(CONFIG_MAP[instruction])
+        differential_step = CONFIG_MAP[instruction] - prev_state[i]
+        differential_step %= 4
+        differential_steps.append(differential_step)
+    
+    prev_state = motor_steps
+
+    print(f"Motor Output: {differential_steps} | Batch: {pointer}")
     # Save image
     cv2.imwrite('images/image_ocr.jpg', img)
 
-    if len(output_motor):
-        send_motor_instructions_backup(output_motor)
-        turn_elevator_motor()
+    send_motor_instructions_backup(differential_steps)
+    turn_elevator_motor()
 
 def capture_image():
     global output_braille, pointer, prev_state
@@ -264,11 +278,21 @@ def next_chars_backup():
         print("End of Output")
     pointer += 1
     curr_state = braille_to_motor(output_braille[pointer-1:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
-    print(f"Motor Output: {output_motor} | Batch: {pointer}")
+
+    motor_steps = []
+    differential_steps = []
+    for i, instruction in enumerate(curr_state):
+        motor_steps.append(CONFIG_MAP[instruction])
+        differential_step = CONFIG_MAP[instruction] - prev_state[i]
+        differential_step %= 4
+        differential_steps.append(differential_step)
+    
+    prev_state = motor_steps
+
+    print(f"Motor Output: {differential_steps} | Batch: {pointer}")
 
     turn_elevator_motor(direction=stepper.BACKWARD)
-    send_motor_instructions_backup(output_motor)
+    turn_motors(differential_steps)
     turn_elevator_motor()
 
 def prev_chars():
@@ -281,7 +305,6 @@ def prev_chars():
     output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
     print(f"Motor Output: {output_motor} | Batch: {pointer // 3}")
 
-    # send_motor_instructions(output_motor)
     prev_state = curr_state
 
 def prev_chars_backup():
@@ -291,11 +314,20 @@ def prev_chars_backup():
 
     pointer -= 1
     curr_state = braille_to_motor(output_braille[pointer-1:pointer])
-    output_motor = ["".join([str(int(a) ^ int(b)) for a, b in zip(x, y)]) for x, y in zip(curr_state, prev_state)]
-    print(f"Motor Output: {output_motor} | Batch: {pointer}")
+
+    motor_steps = []
+    differential_steps = []
+    for i, instruction in enumerate(curr_state):
+        motor_steps.append(CONFIG_MAP[instruction])
+        differential_step = CONFIG_MAP[instruction] - prev_state[i]
+        differential_step %= 4
+        differential_steps.append(differential_step)
+    
+    prev_state = motor_steps
+    print(f"Motor Output: {differential_steps} | Batch: {pointer}")
 
     turn_elevator_motor(direction=stepper.BACKWARD)
-    send_motor_instructions_backup(output_motor)
+    turn_motors(differential_steps)
     turn_elevator_motor()
 
 if __name__ == "__main__":
