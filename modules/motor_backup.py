@@ -38,27 +38,24 @@ def send_motor_instructions(motor_instructions):
   turn_elevator_motor(direction=stepper.BACKWARD)
   time.sleep(5)
 
-  for i in range(len(motor_steps)):
-    motor_steps[i] = MOTOR_STEPS - motor_steps[i] if motor_steps[i] > 0 else 0
-
   print(f"Resetting Motors... {motor_steps}")
-  turn_motors(motor_steps.copy()) # Reset Motors
+  turn_motors(motor_steps.copy(), direction=stepper.BACKWARD) # Reset Motors
 
 def turn_elevator_motor(direction=stepper.FORWARD, style=stepper.SINGLE):
   for i in range(ELEVATOR_STEPS):
     kit3.stepper2.onestep(direction=direction, style=style) # Edit elevator motors here
     kit3.stepper1.onestep(direction=direction, style=style)
 
-def turn_motors(motor_steps):
+def turn_motors(motor_steps, direction=stepper.FORWARD):
   # motor_steps = [0, 1, 2] corresponding to the number of steps each motor has to turn
   while max(motor_steps) != 0:
     for i in range(REVOLUTION // MOTOR_STEPS):
       if motor_steps[0] > 0:
-        kit1.stepper1.onestep()
+        kit1.stepper1.onestep(direction=direction)
       if motor_steps[1] > 0:
-        kit1.stepper2.onestep()
+        kit1.stepper2.onestep(direction=direction)
       if motor_steps[2] > 0:
-        kit2.stepper1.onestep()
+        kit2.stepper1.onestep(direction=direction)
     else:
       for i in range(len(motor_steps)):
         if motor_steps[i] > 0:
