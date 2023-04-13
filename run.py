@@ -21,15 +21,12 @@ GPIO.setwarnings(False)
 
 # Peripherals
 PICTURE_PIN = 17
-# picture_button = Button(PICTURE_PIN)
 GPIO.setup(PICTURE_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 NEXT_PIN = 27
-#next_button = Button(NEXT_PIN)
 GPIO.setup(NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 PREV_PIN = 22
-#prev_button = Button(PREV_PIN)
 GPIO.setup(PREV_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 camera = PiCamera()
@@ -314,12 +311,15 @@ def prev_chars():
     prev_state = curr_state
 
 def prev_chars_backup():
-    global pointer, output_braille
-    if pointer <= 1:
+    global pointer, output_braille, prev_state
+    if pointer <= 0:
         return
 
     pointer -= 1
-    curr_state = braille_to_motor(output_braille[pointer-1:pointer])
+    if pointer == 0:
+        curr_state = ['00','00','00']
+    else:
+        curr_state = braille_to_motor(output_braille[pointer-1:pointer])
 
     motor_steps = []
     differential_steps = []

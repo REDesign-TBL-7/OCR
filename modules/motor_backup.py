@@ -9,7 +9,7 @@ kit2 = MotorKit(address=0x61)
 # kit3 = MotorKit(address=0x62)
 kit4 = MotorKit(address=0x63)
 
-REVOLUTION = 2038
+REVOLUTION = 2060
 MOTOR_STEPS = 4
 ELEVATOR_STEPS = 170
 MOTOR_COUNT = 3
