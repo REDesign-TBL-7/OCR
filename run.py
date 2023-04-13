@@ -134,40 +134,38 @@ def braille_to_motor(braille_input):
 
 def capture_image_backup():
     global pointer, prev_state, output_braille
-    # print("Capturing Image...")
+    print("Capturing Image...")
 
-    # camera.start_preview()
-    # camera.rotation = 180 # Depends how we eventually orientate the camera
-    # camera.capture("images/image.jpg")
-    # camera.stop_preview()
+    camera.start_preview()
+    camera.rotation = 180 # Depends how we eventually orientate the camera
+    camera.capture("images/image.jpg")
+    camera.stop_preview()
 
-    # # Read from camera
-    # img = cv2.imread("images/image.jpg")
+    # Read from camera
+    img = cv2.imread("images/image.jpg")
 
-    # # Read from file
-    # # img = cv2.imread("images/1.jpg")
+    # Read from file
+    # img = cv2.imread("images/1.jpg")
 
-    # d = pytesseract.image_to_data(img, output_type=Output.DICT)
-    # n_boxes = len(d['text'])
+    d = pytesseract.image_to_data(img, output_type=Output.DICT)
+    n_boxes = len(d['text'])
 
-    # output_string = ""
-    # for i in range(n_boxes):
-    #     if int(d['conf'][i]) > 60:
-    #         (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
-    #         # don't show empty text
+    output_string = ""
+    for i in range(n_boxes):
+        if int(d['conf'][i]) > 60:
+            (text, x, y, w, h) = (d['text'][i], d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+            # don't show empty text
 
-    #         if text and text.strip() != "":
-    #             output_string += text + " "
-    #             img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    #             img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
-    # print(f"String Output Bef: {output_string}")
+            if text and text.strip() != "":
+                output_string += text + " "
+                img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                img = cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+    print(f"String Output Bef: {output_string}")
 
-    # # String processing
-    # output_string = string_processing(output_string)
-    # print(f"String Output Aft: {output_string}")
-    # print(f"String Output: {output_string}")
-
-    output_string = 'This is a sample text. Hello REDesign!'
+    # String processing
+    output_string = string_processing(output_string)
+    print(f"String Output Aft: {output_string}")
+    print(f"String Output: {output_string}")
 
     # Conversion to list of braille
     output_braille = string_to_braille(output_string)
@@ -343,8 +341,6 @@ def listen_button(button, callback):
 
 if __name__ == "__main__":
     print("Running program")
-    # send_motor_instructions_backup(['01','11','10'])
-    # turn_elevator_motor()
     
     # picture_button.when_pressed = capture_image_backup if BACKUP else capture_image
     # next_button.when_pressed = next_chars_backup if BACKUP else next_chars
@@ -353,3 +349,7 @@ if __name__ == "__main__":
     while True:
         if GPIO.input(PICTURE_PIN) == GPIO.LOW:
             capture_image_backup()
+        if GPIO.input(NEXT_PIN) == GPIO.LOW:
+            next_chars_backup()
+        if GPIO.input(PREV_PIN) == GPIO.LOW:
+            prev_chars_backup()
