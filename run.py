@@ -7,6 +7,7 @@ from pytesseract import Output
 import re
 # from gtts import gTTS
 import os
+import requests
 
 BACKUP = True
 
@@ -92,9 +93,20 @@ CONFIG_MAP = {
 }
 
 output_braille = []
-output_string = ""
+string_store = ""
 prev_state = ['000000', '000000', '000000']
 pointer = 3
+
+# Audio
+def audio(char):
+    print(char)
+    try:
+        if char == "f":
+            r = requests.get(url=f'http://172.20.10.2/ff')
+        else:
+            r = requests.get(url=f'http://172.20.10.2/{char}')
+    except:
+        pass
 
 # removes all special characters and double spacing
 def string_processing(string_input):
@@ -107,18 +119,23 @@ def string_processing(string_input):
 def string_to_braille(string_input):
     letter_indicator = True
     braille_output = []
+    string_store = ""
     for char in string_input:
         if (letter_indicator==True and char.isnumeric()):
             braille_output.append(code_table["Letter"])
+            char += "^"
             letter_indicator = False
         elif (letter_indicator==False and char.isalpha()):
             braille_output.append(code_table["#"])
             letter_indicator = True
+            char += "#"
         if (char.isupper()):
             braille_output.append(code_table['Capital'])
+            string_store += "%"
             char = char.lower()
         braille_output.append(code_table[char])
-    return braille_output
+        string_store += char
+    return braille_output, string_store
 
 def braille_to_motor(braille_input):
     motor_output = []
@@ -131,7 +148,7 @@ def braille_to_motor(braille_input):
     return motor_output
 
 def capture_image_backup():
-    global pointer, prev_state, output_braille, output_string
+    global pointer, prev_state, output_braille, string_store
     print("Capturing Image...")
 
     camera.start_preview()
@@ -166,7 +183,7 @@ def capture_image_backup():
     print(f"String Output: {output_string}")
 
     # Conversion to list of braille
-    output_braille = string_to_braille(output_string)
+    output_braille, string_store = string_to_braille(output_string)
     print(f"Braille Output: {output_braille}")
 
     # Conversion to braille image
@@ -195,9 +212,10 @@ def capture_image_backup():
     turn_elevator_motor(direction=stepper.BACKWARD)
     turn_motors(differential_steps)
     turn_elevator_motor()
+    audio(string_store[pointer-1])
 
 def capture_image():
-    global output_braille, pointer, prev_state, output_string
+    global output_braille, pointer, prev_state, string_store
 
     print("Capturing Image...")
 
@@ -261,7 +279,7 @@ def capture_image():
     cv2.imwrite('images/image_ocr.jpg', img)
 
 def next_chars():
-    global pointer, output_braille, prev_state, output_string
+    global pointer, output_braille, prev_state, string_store
     if pointer > len(output_braille):
         return
     elif pointer > len(output_braille) - 3:
@@ -275,7 +293,7 @@ def next_chars():
     prev_state = curr_state
 
 def next_chars_backup():
-    global output_braille, pointer, prev_state, output_string
+    global output_braille, pointer, prev_state, string_store
     if pointer > len(output_braille):
         return
     elif pointer > len(output_braille) - 1:
@@ -298,6 +316,7 @@ def next_chars_backup():
     turn_elevator_motor(direction=stepper.BACKWARD)
     turn_motors(differential_steps)
     turn_elevator_motor()
+    audio(string_store[pointer-1])
 
 def prev_chars():
     global pointer, output_braille, prev_state, output_string
@@ -312,7 +331,7 @@ def prev_chars():
     prev_state = curr_state
 
 def prev_chars_backup():
-    global pointer, output_braille, prev_state, output_string
+    global pointer, output_braille, prev_state, string_store
     if pointer <= 0:
         return
 
@@ -336,9 +355,7 @@ def prev_chars_backup():
     turn_elevator_motor(direction=stepper.BACKWARD)
     turn_motors(differential_steps)
     turn_elevator_motor()
-    
-def listen_button(button, callback):
-    button.when_pressed = callback
+    audio(string_store[pointer-1])
 
 if __name__ == "__main__":
     print("Running program")
