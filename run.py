@@ -92,6 +92,7 @@ CONFIG_MAP = {
 }
 
 output_braille = []
+output_string = ""
 prev_state = ['000000', '000000', '000000']
 pointer = 3
 
@@ -130,7 +131,7 @@ def braille_to_motor(braille_input):
     return motor_output
 
 def capture_image_backup():
-    global pointer, prev_state, output_braille
+    global pointer, prev_state, output_braille, output_string
     print("Capturing Image...")
 
     camera.start_preview()
@@ -196,7 +197,7 @@ def capture_image_backup():
     turn_elevator_motor()
 
 def capture_image():
-    global output_braille, pointer, prev_state
+    global output_braille, pointer, prev_state, output_string
 
     print("Capturing Image...")
 
@@ -260,7 +261,7 @@ def capture_image():
     cv2.imwrite('images/image_ocr.jpg', img)
 
 def next_chars():
-    global pointer, output_braille, prev_state
+    global pointer, output_braille, prev_state, output_string
     if pointer > len(output_braille):
         return
     elif pointer > len(output_braille) - 3:
@@ -274,7 +275,7 @@ def next_chars():
     prev_state = curr_state
 
 def next_chars_backup():
-    global output_braille, pointer, prev_state
+    global output_braille, pointer, prev_state, output_string
     if pointer > len(output_braille):
         return
     elif pointer > len(output_braille) - 1:
@@ -299,7 +300,7 @@ def next_chars_backup():
     turn_elevator_motor()
 
 def prev_chars():
-    global pointer, output_braille, prev_state
+    global pointer, output_braille, prev_state, output_string
     if pointer <= 3:
         return
 
@@ -311,7 +312,7 @@ def prev_chars():
     prev_state = curr_state
 
 def prev_chars_backup():
-    global pointer, output_braille, prev_state
+    global pointer, output_braille, prev_state, output_string
     if pointer <= 0:
         return
 
