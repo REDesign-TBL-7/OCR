@@ -1,33 +1,11 @@
 import serial
+import time
 
-# Open a serial connection to the DFPlayer Mini
-ser = serial.Serial('/dev/ttyS0', 9600)
+ser = serial.Serial('/dev/ttyAMA0', 9600) # Set the correct serial port and baud rate
 
-# Send a command to the DFPlayer Mini
-def send_cmd(cmd, feedback=True):
-    # Create a bytearray with the command and checksum
-    data = bytearray([0x7e, 0xff, 0x06, cmd >> 8, cmd & 0xff, 0x00, 0x00, 0x00, 0xef])
+def play_sound():
+    ser.write(bytes([0x7E, 0xFF, 0x06, 0x0D, 0x00, 0x01, 0x01, 0x01, 0xFE, 0xEF])) # Send the command to play the first MP3 file on the SD card
+    time.sleep(5) # Wait for 5 seconds
+    ser.write(bytes([0x7E, 0xFF, 0x06, 0x0D, 0x00, 0x00, 0x01, 0x01, 0xFE, 0xEF])) # Send the command to stop playing the MP3 file
 
-    # Send the command to the DFPlayer Mini
-    ser.write(data)
-
-    # Wait for feedback if enabled
-    if feedback:
-        while True:
-            if ser.read() == b'\x7e':
-                if ser.read() == b'\xff':
-                    if ser.read() == b'\x06':
-                        if ser.read() == b'\x00':
-                            if ser.read() == b'\x00':
-                                if ser.read() == b'\x00':
-                                    if ser.read() == b'\xfe':
-                                        if ser.read() == b'\xef':
-                                            break
-
-# Set the volume to 50%
-send_cmd(0x0605, feedback=False)
-send_cmd(0x0601, feedback=False)
-send_cmd(0x0600, feedback=False)
-
-# Play track 001
-send_cmd(0x0301)
+play_sound() # Call the function to play the MP3 file
